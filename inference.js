@@ -90,8 +90,8 @@ function predict(featureVector) {
 }
 
 /** Convenience: category + confidence like the backend. */
-function classify(probability) {
-  const predicted = probability >= 0.5 ? 1 : 0;
+function classify(probability, threshold = 0.5) {
+  const predicted = probability >= threshold ? 1 : 0;
   return {
     category: predicted === 1 ? 'High Threat' : 'Legitimate',
     confidence: predicted === 1 ? probability : 1 - probability,

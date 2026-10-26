@@ -18,7 +18,7 @@ const recent = [];
 const MAX_RECENT = 50;
 
 // Scan threshold (>= 0.5 phishing probability => High Threat => block).
-const THREAT_THRESHOLD = 0.5;
+const THREAT_THRESHOLD = 0.67;
 
 // One-time allow list: when the user chooses "Visit anyway" on the warning
 // interstitial, the target URL is permitted once before the re-scan fires.
