@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BB-Extension Module1</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: #0b0f19;
+      color: #e8eaf2;
+      width: 360px;
+    }
+    .wrap { padding: 18px 20px; }
+    .header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+    .badge {
+      width: 26px; height: 26px; border-radius: 8px;
+      background: #141a2b; border: 1px solid #2a334d;
+      color: #c7cfe5; display: grid; place-items: center; font-size: 16px;
+    }
+    h1 { margin: 0; font-size: 17px; letter-spacing: -0.4px; }
+    .status {
+      margin-bottom: 16px; padding: 10px 12px; border-radius: 8px;
+      background: #141a2b; border: 1px solid #2a334d;
+      font-size: 12px; color: #9aa3bd;
+    }
+    .status.ok { color: #86efac; border-color: #166534; }
+    .status.err { color: #fca5a5; border-color: #7f1d1d; }
+    .controls { margin-bottom: 16px; display: flex; gap: 8px; flex-direction: column; }
+    .btn {
+      width: 100%; padding: 8px 12px; border-radius: 8px; border: none;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      background: #4f46e5; color: #fff;
+    }
+    .btn:hover { background: #4338ca; }
+    .btn.secondary { background: #1e273b; color: #c7cfe5; border: 1px solid #3b4661; }
+    .btn.secondary:hover { background: #27324d; }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .switch {
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 13px; color: #c7cfe5;
+    }
+    .toggle { position: relative; width: 42px; height: 24px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; inset: 0; background: #3b4661; border-radius: 24px;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .slider:before {
+      content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px;
+      background: #fff; border-radius: 50%; transition: transform 0.2s;
+    }
+    input:checked + .slider { background: #4f46e5; }
+    input:checked + .slider:before { transform: translateX(18px); }
+    .recent { margin-top: 16px; }
+    .recent-title {
+      font-size: 12px; color: #9aa3bd; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.6px;
+    }
+    .item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 10px; border-radius: 8px; border: 1px solid #1e273b;
+      margin-bottom: 6px; font-size: 12px;
+    }
+    .item-info .item-url { color: #c7cfe5; word-break: break-all; }
+    .item-meta { color: #707a9b; font-size: 11px; }
+    .item-badge {
+      font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 6px;
+      background: #4c1d1d; color: #ffc4c4;
+    }
+    .item-badge.legit { background: #163416; color: #86efac; }
+    .empty { color: #707a9b; font-size: 12px; padding: 10px 0; }
+    .fine { font-size: 11px; color: #707a9b; line-height: 1.5; margin-top: 14px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div class="badge">&#128293;</div>
+      <h1>BB-Extension Module1</h1>
+    </div>
+
+    <div class="status" id="status">
+      Loading…
+    </div>
+
+    <div class="controls">
+      <button class="btn" id="scanBtn">Scan current tab</button>
+      <div class="switch">
+        <span id="blockLabel">Block high-threat sites</span>
+        <label class="toggle">
+          <input type="checkbox" id="blockToggle" checked />
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="recent">
+      <div class="recent-title">Recent scans</div>
+      <div id="recentList">
+        <div class="empty">No scans yet.</div>
+      </div>
+    </div>
+
+    <p class="fine">
+      Runs the XGBoost model locally on every page you load. High-threat pages
+      are intercepted with a warning before they open.
+    </p>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

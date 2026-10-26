@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "BB-Extension Module1 URL Scanner",
+  "version": "1.0.0",
+  "description": "Captures every URL you load, runs the XGBoost phishing model locally, and blocks high-threat pages.",
+
+  "permissions": [
+    "webNavigation",
+    "storage",
+    "tabs"
+  ],
+
+  "host_permissions": [
+    "<all_urls>"
+  ],
+
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Scan current tab"
+  },
+
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  }
+}

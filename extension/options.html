@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BB-Extension Module1 — Options</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: #0b0f19; color: #e8eaf2; padding: 24px;
+    }
+    h1 { font-size: 20px; margin: 0 0 8px; }
+    p.sub { font-size: 13px; color: #9aa3bd; margin: 0 0 26px; }
+    .card { padding: 20px; border-radius: 12px; background: #141a2b; border: 1px solid #2a334d; max-width: 560px; }
+    .switch { display: flex; align-items: center; justify-content: space-between; font-size: 15px; color: #c7cfe5; margin-bottom: 10px; }
+    .toggle { position: relative; width: 48px; height: 26px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; inset: 0; background: #3b4661; border-radius: 26px; cursor: pointer; transition: background 0.2s; }
+    .slider:before { content: ''; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; background: #fff; border-radius: 50%; transition: transform 0.2s; }
+    input:checked + .slider { background: #4f46e5; }
+    input:checked + .slider:before { transform: translateX(22px); }
+    .fine { margin-top: 18px; font-size: 12px; color: #707a9b; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <h1>BB-Extension Module1</h1>
+  <p class="sub">Extension settings for the URL phishing blocker.</p>
+  <div class="card">
+    <div class="switch">
+      <span>Block high-threat sites</span>
+      <label class="toggle">
+        <input type="checkbox" id="blockToggle" checked />
+        <span class="slider"></span>
+      </label>
+    </div>
+    <p class="fine">
+      When enabled, pages classified as High Threat by the local XGBoost model
+      are intercepted with a warning before they open. Settings sync across
+      your signed-in Chrome instances.
+    </p>
+  </div>
+  <script src="options.js"></script>
+</body>
+</html>
