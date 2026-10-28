@@ -4,7 +4,7 @@ Offline, privacy-focused Chrome extension (Manifest V3) that scans every URL you
 
 ## Features
 - Captures navigations with `webNavigation`, runs inference fully on-device.
-- 111 lexical/structural URL features extracted in both Python (training) and JavaScript (extension) with identical names, order, and defaults.
+- 30 lexical/structural URL features extracted in both Python (training) and JavaScript (extension) with identical names, order, and defaults.
 - Local XGBoost inference (`inference.js`) reproduces `predict_proba` exactly.
 - Configurable threat threshold (default 0.67) tuned on validation data.
 
