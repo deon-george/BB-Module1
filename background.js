@@ -110,7 +110,10 @@ async function onBeforeNavigate(details) {
   }
   recordRecent(url, result);
 
-  if (result.block && settings.blockingEnabled && !allowedOnce) {
+  // Skip SRP (search results page) - never block.
+  const isSRP = /\/search\?|\/search\/|q=|search_query=|query=/i.test(url);
+
+  if (result.block && settings.blockingEnabled && !allowedOnce && !isSRP && result.confidence > 0.9) {
     await blockNavigation(tabId, url, result);
   }
 }
@@ -121,8 +124,8 @@ async function scanUrl(url) {
   const { probability, margin } = predict(feature_vector);
   const classification = classify(probability);
 
-  // Block when classified High Threat (phishing class probability >= 0.5).
-  const block = classification.category === 'High Threat';
+  // Block only when confidence > 90%.
+  const block = classification.category === 'High Threat' && classification.confidence > 0.9;
 
   return {
     url,
