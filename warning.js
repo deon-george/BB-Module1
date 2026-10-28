@@ -28,9 +28,18 @@
     }
   }
 
-  document.getElementById('goBack').addEventListener('click', (e) => {
+  document.getElementById('goBack').addEventListener('click', async (e) => {
     e.preventDefault();
-    history.back();
+    try {
+      const tab = await chrome.tabs.getCurrent();
+      if (tab && tab.id) {
+        await chrome.tabs.update(tab.id, { url: 'chrome://newtab/' });
+        return;
+      }
+    } catch (err) {
+      console.warn('[BB-Extension Module1] goBack failed:', err);
+    }
+    location.href = 'chrome://newtab/';
   });
 
   document.getElementById('visitAnyway').addEventListener('click', async (e) => {

@@ -1,25 +1,24 @@
-"""Train XGBoost on train.csv, tune threshold on validation.csv, evaluate on test.csv."""
+"""Train XGBoost on PhishingDataset.csv, tune threshold on validation, evaluate on test."""
 import json
 import numpy as np
 import pandas as pd
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import (precision_score, recall_score, f1_score,
                               roc_auc_score, confusion_matrix)
 import xgboost as xgb
 
-train = pd.read_csv('train.csv')
-val = pd.read_csv('validation.csv')
-test = pd.read_csv('test.csv')
+df = pd.read_csv('PhishingDataset.csv')
+# Result: 1 = phishing, -1 = legitimate
+y = (df['Result'] == 1).astype(int).values
+X = df.drop(columns=['Result']).values
+feature_names = list(df.drop(columns=['Result']).columns)
 
-Xtr = train.drop(columns=['phishing']).values
-ytr = train['phishing'].values
-Xva = val.drop(columns=['phishing']).values
-yva = val['phishing'].values
-Xte = test.drop(columns=['phishing']).values
-yte = test['phishing'].values
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+Xtr, Xva, ytr, yva = train_test_split(Xtr, ytr, test_size=0.25, random_state=42, stratify=ytr)
 
-dtrain = xgb.DMatrix(Xtr, label=ytr)
-dval = xgb.DMatrix(Xva, label=yva)
-dtest = xgb.DMatrix(Xte, label=yte)
+dtrain = xgb.DMatrix(Xtr, label=ytr, feature_names=feature_names)
+dval = xgb.DMatrix(Xva, label=yva, feature_names=feature_names)
+dtest = xgb.DMatrix(Xte, label=yte, feature_names=feature_names)
 
 params = {
     'objective': 'binary:logistic',
@@ -28,28 +27,25 @@ params = {
     'eta': 0.1,
     'subsample': 0.8,
     'colsample_bytree': 0.8,
-    'scale_pos_weight': float((ytr==0).sum()/(ytr==1).sum()),
+    'scale_pos_weight': float((ytr == 0).sum() / (ytr == 1).sum()),
     'seed': 42,
 }
 bst = xgb.train(params, dtrain, num_boost_round=300,
-                evals=[(dval,'val')], early_stopping_rounds=30, verbose_eval=50)
+                evals=[(dval, 'val')], early_stopping_rounds=30, verbose_eval=50)
 
-# Save in XGBoost JSON format compatible with inference.js (expects learner.gradient_booster.model)
 bst.save_model('model.json')
 print('saved model.json')
 
-# Threshold sweep on validation
 va_prob = bst.predict(dval)
 best = None
 for t in np.arange(0.1, 0.91, 0.01):
     pred = (va_prob >= t).astype(int)
     tn, fp, fn, tp = confusion_matrix(yva, pred).ravel()
-    fpr = fp/(fp+tn) if (fp+tn) else 0
-    fnr = fn/(fn+tp) if (fn+tp) else 0
+    fpr = fp / (fp + tn) if (fp + tn) else 0
+    fnr = fn / (fn + tp) if (fn + tp) else 0
     f1 = f1_score(yva, pred)
-    # minimize FNR subject to FPR <= 0.02, then maximize F1
     if fpr <= 0.02:
-        if best is None or fnr < best[1] or (fnr==best[1] and f1>best[2]):
+        if best is None or fnr < best[1] or (fnr == best[1] and f1 > best[2]):
             best = (t, fnr, f1, fpr)
 print('best threshold (FPR<=0.02):', best)
 
@@ -65,8 +61,6 @@ report('validation', yva, va_prob, t)
 te_prob = bst.predict(dtest)
 report('test', yte, te_prob, t)
 
-# Write chosen threshold into a small file for reference
-with open('threshold.txt','w') as f:
-    f.write(str(round(float(t),2)))
+with open('threshold.txt', 'w') as f:
+    f.write(str(round(float(t), 2)))
 print('threshold written to threshold.txt')
-PY
